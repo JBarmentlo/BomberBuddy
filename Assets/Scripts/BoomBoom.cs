@@ -6,8 +6,10 @@ public class BoomBoom : MonoBehaviour
 {
     public  GameObject  explosionPrefab;
     public  LayerMask   levelMask;
-    private bool exploded = false;
-    // Start is called before the first frame update
+    private bool        exploded = false;
+
+    // public  int         playerOwner;
+
     void Start()
     {
         Invoke("Explode", 3f);

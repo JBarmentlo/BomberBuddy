@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
     //Can the player drop bombs?
     public  bool        canMove = true;
     //Can the player move?
-    private int         bombs = 2;
+    // private int         bombs = 2;
     //Amount of bombs the player has left to drop, gets decreased as the player
     //drops a bomb, increases as an owned bomb explodes
     public  bool        dead = false;
@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
 
     //Cached components
     private Rigidbody   rigidBody;
+    private Collider    playerCollider;
     private Transform   myTransform;
     private Animator    animator;
 
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour
     {
         //Cache the attached components for better performance and less typing
         rigidBody = GetComponent<Rigidbody>();
+        playerCollider   = GetComponent<CapsuleCollider>();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
     }
@@ -182,7 +184,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void DropBomb()
     {
-        Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
+        GameObject bomb = Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
+        bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
     }
 
     public void OnTriggerEnter(Collider other)
@@ -195,4 +198,16 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    // void OnCollisionEnter(Collision other)
+    // {
+    //     Debug.Log("Colision ENter");
+    //     if(other.gameObject.CompareTag("Player"))
+    //     {
+    //         if (other.gameObject.GetComponent<Player>().playerNumber == 1)
+    //         {
+    //             Physics.IgnoreCollision(collid, other.collider);
+    //         }
+    //     }
+    // }
 }

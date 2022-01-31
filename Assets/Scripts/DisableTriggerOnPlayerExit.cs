@@ -37,12 +37,30 @@ using System.Collections;
 /// </summary>
 public class DisableTriggerOnPlayerExit : MonoBehaviour
 {
+    private Collider    collid;
 
-    public void OnTriggerExit(Collider other)
+    void Start()
+    {
+        collid = GetComponent<Collider>();
+    }
+
+    void OnTriggerExit(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
         { // When the player exits the trigger area
             GetComponent<Collider>().isTrigger = false; // Disable the trigger
         }
-    }
+    }  
+    
+    // void OnCollisionEnter(Collision other)
+    // {
+    //     Debug.Log("Colision ENter");
+    //     if(other.gameObject.CompareTag("Player"))
+    //     {
+    //         if (other.gameObject.GetComponent<Player>().playerNumber == playerOwner)
+    //         {
+    //             Physics.IgnoreCollision(collid, other.collider);
+    //         }
+    //     }
+    // }
 }
