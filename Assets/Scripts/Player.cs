@@ -170,12 +170,18 @@ public class Player : MonoBehaviour
         }
     }
 
+
+    private Vector3 RoundToGrid(Vector3 pos)
+    {
+        return new Vector3(Mathf.RoundToInt(transform.position.x), transform.position.y, Mathf.RoundToInt(transform.position.z));
+    }
+
     /// <summary>
     /// Drops a bomb beneath the player
     /// </summary>
     private void DropBomb()
     {
-        Instantiate(bombPrefab, transform.position, bombPrefab.transform.rotation);
+        Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
     }
 
     public void OnTriggerEnter(Collider other)
