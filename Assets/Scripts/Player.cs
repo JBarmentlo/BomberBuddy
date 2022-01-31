@@ -37,17 +37,18 @@ public class Player : MonoBehaviour
 
     //Player parameters
     [Range(1, 2)] //Enables a nifty slider in the editor
-    public  int     playerNumber = 1;
+    public  int         playerNumber = 1;
     //Indicates what player this is: P1 or P2
-    public  float   moveSpeed = 5f;
-    public  bool    canDropBombs = true;
+    public  float       moveSpeed = 5f;
+    public  bool        canDropBombs = true;
     //Can the player drop bombs?
-    public  bool    canMove = true;
+    public  bool        canMove = true;
     //Can the player move?
-
-    private int     bombs = 2;
+    private int         bombs = 2;
     //Amount of bombs the player has left to drop, gets decreased as the player
     //drops a bomb, increases as an owned bomb explodes
+    public  bool        dead = false;
+    public  GlobalStateManager  globalManager;
 
     //Prefabs
     public GameObject   bombPrefab;
@@ -189,6 +190,9 @@ public class Player : MonoBehaviour
         if(other.CompareTag("Explosion"))
         {
             Debug.Log("P" + playerNumber + " hit by explosion!");
+            dead = true;
+            globalManager.PlayerDied(playerNumber);
+            Destroy(gameObject);
         }
     }
 }
