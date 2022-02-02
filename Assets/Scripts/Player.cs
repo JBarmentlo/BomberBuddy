@@ -177,13 +177,25 @@ public class Player : MonoBehaviour
         return new Vector3(Mathf.RoundToInt(transform.position.x), transform.position.y, Mathf.RoundToInt(transform.position.z));
     }
 
+    public void BombCountPlusOne()
+    {
+        bombs += 1;
+    }
     /// <summary>
     /// Drops a bomb beneath the player
     /// </summary>
     private void DropBomb()
     {
-        GameObject bomb = Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
-        bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
+        if (bombs > 0)
+        {
+            bombs -= 1;
+            GameObject bomb = Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
+            BoomBoom boomboom = bomb.gameObject.GetComponent<BoomBoom>();
+            boomboom.bombcountreset = BombCountPlusOne;
+            boomboom.bombRange = bombRange;
+            bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
+        }
+
     }
 
     public void OnTriggerEnter(Collider other)

@@ -9,6 +9,8 @@ public class BoomBoom : MonoBehaviour
     private bool        exploded = false;
     public  int         bombRange = 3;
 
+    public System.Action       bombcountreset;
+
     // public  int         playerOwner;
 
     void Start()
@@ -19,6 +21,7 @@ public class BoomBoom : MonoBehaviour
     void Explode()
     {
         Instantiate(explosionPrefab, transform.position, Quaternion.identity); //1
+        bombcountreset();
         StartCoroutine(CreateExplosions(Vector3.forward));
         StartCoroutine(CreateExplosions(Vector3.right));
         StartCoroutine(CreateExplosions(Vector3.back));
@@ -32,9 +35,10 @@ public class BoomBoom : MonoBehaviour
 
     private IEnumerator CreateExplosions(Vector3 direction) 
     {
-        Vector3    rayStart = transform.position + new Vector3(0,.5f,0); 
+        Vector3    rayStart = transform.position; //  + new Vector3(0,.5f,0) 
         for (int i = 1; i < bombRange; i++) 
         {
+            // Debug.Log("Ray start: " + rayStart);
             RaycastHit hit;
             Physics.Raycast(rayStart, direction, out hit, i, levelMask); 
             rayStart += direction;
@@ -47,14 +51,14 @@ public class BoomBoom : MonoBehaviour
             {
                 Debug.Log("CRATEBOOM");
                 hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
+                break;
             }
             else 
             {
                 // Debug.Log("explode collid " + hit.collider.gameObject);
-                // Debug.Log(hit.collider.name);
+                Debug.Log(hit.collider.name);
                 break; 
             }
-            Debug.Log("Bomb loop: " + i);
             yield return new WaitForSeconds(.05f); 
         }
     }  
