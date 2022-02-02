@@ -7,6 +7,7 @@ public class BoomBoom : MonoBehaviour
     public  GameObject  explosionPrefab;
     public  LayerMask   levelMask;
     private bool        exploded = false;
+    public  int         bombRange = 3;
 
     // public  int         playerOwner;
 
@@ -31,21 +32,29 @@ public class BoomBoom : MonoBehaviour
 
     private IEnumerator CreateExplosions(Vector3 direction) 
     {
-        for (int i = 1; i < 3; i++) 
+        Vector3    rayStart = transform.position + new Vector3(0,.5f,0); 
+        for (int i = 1; i < bombRange; i++) 
         {
-            RaycastHit hit; 
-            Physics.Raycast(transform.position + new Vector3(0,.5f,0), direction, out hit, i, levelMask); 
+            RaycastHit hit;
+            Physics.Raycast(rayStart, direction, out hit, i, levelMask); 
+            rayStart += direction;
             if (!hit.collider) 
             {
                 // Debug.Log((transform.position + (i * direction)));
                 Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation); 
-            } 
+            }
+            else if (hit.collider.gameObject.CompareTag("Crate"))
+            {
+                Debug.Log("CRATEBOOM");
+                hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
+            }
             else 
             {
+                // Debug.Log("explode collid " + hit.collider.gameObject);
                 // Debug.Log(hit.collider.name);
                 break; 
             }
-
+            Debug.Log("Bomb loop: " + i);
             yield return new WaitForSeconds(.05f); 
         }
     }  
@@ -54,7 +63,6 @@ public class BoomBoom : MonoBehaviour
     {
         if (!exploded && other.CompareTag("Explosion"))
         {
-            Debug.Log("Trigger BOOM");
             CancelInvoke("Explode");
             Explode();
         }  

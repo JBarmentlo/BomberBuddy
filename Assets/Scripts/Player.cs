@@ -35,19 +35,16 @@ using System;
 public class Player : MonoBehaviour
 {
 
-    //Player parameters
-    [Range(1, 2)] //Enables a nifty slider in the editor
+    [Range(1, 2)]
     public  int         playerNumber = 1;
-    //Indicates what player this is: P1 or P2
-    [Range(1, 5)] //Enables a nifty slider in the editor
-    public  float       moveSpeed = 5f;
+    [Range(1, 5)]
     public  bool        canDropBombs = true;
-    //Can the player drop bombs?
     public  bool        canMove = true;
-    //Can the player move?
-    // private int         bombs = 2;
-    //Amount of bombs the player has left to drop, gets decreased as the player
-    //drops a bomb, increases as an owned bomb explodes
+    public  float       moveSpeed = 5f;
+    public  int         bombs = 2;
+    public  int         bombRange = 3;
+
+
     public  bool        dead = false;
     // public  GlobalStateManager  globalManager;
 
@@ -200,15 +197,5 @@ public class Player : MonoBehaviour
         }
     }
 
-    // void OnCollisionEnter(Collision other)
-    // {
-    //     Debug.Log("Colision ENter");
-    //     if(other.gameObject.CompareTag("Player"))
-    //     {
-    //         if (other.gameObject.GetComponent<Player>().playerNumber == 1)
-    //         {
-    //             Physics.IgnoreCollision(collid, other.collider);
-    //         }
-    //     }
-    // }
+
 }
