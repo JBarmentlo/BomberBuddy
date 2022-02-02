@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     [Range(1, 2)] //Enables a nifty slider in the editor
     public  int         playerNumber = 1;
     //Indicates what player this is: P1 or P2
+    [Range(1, 5)] //Enables a nifty slider in the editor
     public  float       moveSpeed = 5f;
     public  bool        canDropBombs = true;
     //Can the player drop bombs?

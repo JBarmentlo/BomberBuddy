@@ -54,6 +54,7 @@ public class BoomBoom : MonoBehaviour
     {
         if (!exploded && other.CompareTag("Explosion"))
         {
+            Debug.Log("Trigger BOOM");
             CancelInvoke("Explode");
             Explode();
         }  
