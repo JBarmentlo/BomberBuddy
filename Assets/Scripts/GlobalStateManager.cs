@@ -35,6 +35,20 @@ public class GlobalStateManager : MonoBehaviour
 {
     private int deadPlayers = 0;
     private int deadPlayerNumber = -1;  
+    private static GlobalStateManager _instance;
+    public static GlobalStateManager Instance { get { return _instance; } }
+
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        } else {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     public void PlayerDied(int playerNumber)
     {

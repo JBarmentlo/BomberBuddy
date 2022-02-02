@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
     //Amount of bombs the player has left to drop, gets decreased as the player
     //drops a bomb, increases as an owned bomb explodes
     public  bool        dead = false;
-    public  GlobalStateManager  globalManager;
+    // public  GlobalStateManager  globalManager;
 
     //Prefabs
     public GameObject   bombPrefab;
@@ -194,7 +194,7 @@ public class Player : MonoBehaviour
         {
             Debug.Log("P" + playerNumber + " hit by explosion!");
             dead = true;
-            globalManager.PlayerDied(playerNumber);
+            GlobalStateManager.Instance.PlayerDied(playerNumber);
             Destroy(gameObject);
         }
     }
