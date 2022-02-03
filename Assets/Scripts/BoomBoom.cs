@@ -38,7 +38,6 @@ public class BoomBoom : MonoBehaviour
         Vector3    rayStart = transform.position; //  + new Vector3(0,.5f,0) 
         for (int i = 1; i < bombRange; i++) 
         {
-            // Debug.Log("Ray start: " + rayStart);
             RaycastHit hit;
             Physics.Raycast(rayStart, direction, out hit, i, levelMask); 
             rayStart += direction;
@@ -49,14 +48,11 @@ public class BoomBoom : MonoBehaviour
             }
             else if (hit.collider.gameObject.CompareTag("Crate"))
             {
-                Debug.Log("CRATEBOOM");
                 hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
                 break;
             }
             else 
             {
-                // Debug.Log("explode collid " + hit.collider.gameObject);
-                Debug.Log(hit.collider.name);
                 break; 
             }
             yield return new WaitForSeconds(.05f); 

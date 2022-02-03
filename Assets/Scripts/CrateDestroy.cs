@@ -9,9 +9,10 @@ public class CrateDestroy : MonoBehaviour
 
     public List<GameObject> drops;
     // Start is called before the first frame update
+
     public void ExplodeCrate()
     {
-        int dropIdx = Mathf.FloorToInt(Random.Range(0, drops.Count + 0.99f));
+        int dropIdx = Mathf.FloorToInt(Random.Range(0, drops.Count));
         Instantiate(drops[dropIdx], transform.position, Quaternion.identity);
         Destroy(gameObject);
 
