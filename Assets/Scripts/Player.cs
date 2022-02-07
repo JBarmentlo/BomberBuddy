@@ -95,6 +95,42 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Updates Player 1's movement and facing rotation using the WASD keys and drops bombs using Space
     /// </summary>
+   
+    public  void DoAction(ActionEnum a)
+    {
+        if (a == ActionEnum.Up)
+        {
+            rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, moveSpeed);
+            myTransform.rotation = Quaternion.Euler(0, 0, 0);
+            animator.SetBool("Walking", true);
+        }
+
+        if (a == ActionEnum.Left)
+        { //Left movement
+            rigidBody.velocity = new Vector3(-moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
+            myTransform.rotation = Quaternion.Euler(0, 270, 0);
+            animator.SetBool("Walking", true);
+        }
+
+        if (a == ActionEnum.Down)
+        { //Down movement
+            rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, -moveSpeed);
+            myTransform.rotation = Quaternion.Euler(0, 180, 0);
+            animator.SetBool("Walking", true);
+        }
+
+        if (a == ActionEnum.Right)
+        { //Right movement
+            rigidBody.velocity = new Vector3(moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
+            myTransform.rotation = Quaternion.Euler(0, 90, 0);
+            animator.SetBool("Walking", true);
+        }
+
+        if(canDropBombs && a == ActionEnum.Bomb)
+        { //Drop bomb
+            DropBomb();
+        }
+    }
     private void UpdatePlayer1Movement()
     {
         if(Input.GetKey(KeyCode.W))
@@ -193,9 +229,8 @@ public class Player : MonoBehaviour
             BoomBoom boomboom = bomb.gameObject.GetComponent<BoomBoom>();
             boomboom.bombcountreset = BombCountPlusOne;
             boomboom.bombRange = bombRange;
-            bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
+            // bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
         }
-
     }
 
     public void OnTriggerEnter(Collider other)
@@ -208,6 +243,4 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-
 }

@@ -30,6 +30,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// This script makes sure that a bomb can be laid down at the player's feet without causing buggy movement when the player walks away.
@@ -38,29 +39,66 @@ using System.Collections;
 public class DisableTriggerOnPlayerExit : MonoBehaviour
 {
     private Collider    collid;
+    // private bool        firstFrame = true;
+    // private List<Collider>  ignoredColliders;
 
+    IEnumerator EnableCollision()
+    {
+        yield return new WaitForSeconds(0.1f);
+        collid.isTrigger = false; // Disable the trigger
+    }
     void Start()
     {
-        collid = GetComponent<Collider>();
+        Collider[] G = GetComponents<Collider>();
+        collid = G[0];
+        StartCoroutine(EnableCollision());
     }
+
 
     void OnTriggerExit(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
         { // When the player exits the trigger area
-            GetComponent<Collider>().isTrigger = false; // Disable the trigger
+            // Debug.Log("Trigger Exit");
+            // Physics.IgnoreCollision(collid, other, false);
+            // collid.isTrigger = false; // Disable the trigger
         }
     }  
     
-    // void OnCollisionEnter(Collision other)
-    // {
-    //     Debug.Log("Colision ENter");
-    //     if(other.gameObject.CompareTag("Player"))
-    //     {
-    //         if (other.gameObject.GetComponent<Player>().playerNumber == playerOwner)
-    //         {
-    //             Physics.IgnoreCollision(collid, other.collider);
-    //         }
-    //     }
-    // }
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        { // When the player exits the trigger area
+            // Debug.Log("Trigger Enter");
+            Physics.IgnoreCollision(collid, other, true);
+            // GetComponent<Collider>().isTrigger = false; // Disable the trigger
+        }
+    }  
+
+    void OnCollisionEnter(Collision other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        {
+            // Debug.Log("Colision ENter");
+            Physics.IgnoreCollision(collid, other.collider, true);
+        }
+    }
+
+    void OnCollision(Collision other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        {
+            // Debug.Log("Colision");
+            // Physics.IgnoreCollision(collid, other.collider);
+        }
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        {
+            // Debug.Log("Colision EXIT");
+            Physics.IgnoreCollision(collid, other.collider, false);
+        }
+    }
 }

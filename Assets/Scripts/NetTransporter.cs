@@ -9,11 +9,32 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
+[System.Serializable]
+public enum ActionEnum
+{
+	Nothing,
+	Up,
+	Down,
+	Left,
+	Right,
+	Bomb
+};
+
+
+[System.Serializable]
+public class ActionMessage
+{
+	// String action;
+	public ActionEnum	action;
+}
+
 public class NetTransporter : MonoBehaviour
 {
 	private TcpListener 	server 	= null;
 	private TcpClient 		client 	= null;
 	private NetworkStream 	stream 	= null;
+
+	public	Player			player;
 
 	private Byte[] 			bytes 	= new Byte[256];
 	private String 			data 	= null;
@@ -44,7 +65,7 @@ public class NetTransporter : MonoBehaviour
 		if (client == null)
 		{
 			Debug.Log("Waiting for a connection... ");
-
+			// JsonUtility.FromJson
 			// Perform a blocking call to accept requests.
 			// You could also use server.AcceptSocket() here.
 			client = server.AcceptTcpClient();
@@ -57,25 +78,31 @@ public class NetTransporter : MonoBehaviour
 
 	public void RecieveMessage()
 	{
+		Debug.Log("RecieveMessage");
 		try
 		{
 			int i = 0;
-
+			// Byte[] bytes 	= new Byte[256];
+			Array.Clear(bytes, 0, 256);
 			// Loop to receive all the data sent by the client.
-			if((i = stream.Read(bytes, 0, bytes.Length))!=0)
+			if((stream.DataAvailable) && (i = stream.Read(bytes, 0, bytes.Length))!=0)
 			{
 				// Translate data bytes to a ASCII string.
 				data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
 				Debug.Log("Received: {0}" + data);
 
+				ActionMessage a = JsonUtility.FromJson<ActionMessage>(data);
+				Debug.Log("Parsed: " + a);
+				player.DoAction(a.action);
+				Debug.Log("did a");
 				// Process the data sent by the client.
-				data = data.ToUpper();
+				// data = data.ToUpper();
 
-				byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+				// byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
-				// Send back a response.
-				stream.Write(msg, 0, msg.Length);
-				Debug.Log("Sent: {0}" + data);
+				// // Send back a response.
+				// stream.Write(msg, 0, msg.Length);
+				// Debug.Log("Sent: {0}" + data);
 			}
 
 			// Shutdown and end connection
@@ -99,5 +126,16 @@ public class NetTransporter : MonoBehaviour
 	public void Start()
 	{
 		StartListenerServer();
+		// ActionMessage a;
+		// a.action = ActionEnum.Up;
+		// Debug.Log("JSON " + JsonUtility.ToJson(a));
+	}
+
+	public void Update()
+	{
+		if (client != null)
+		{
+			RecieveMessage();
+		}
 	}
 }
