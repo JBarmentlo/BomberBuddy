@@ -78,7 +78,7 @@ public class NetTransporter : MonoBehaviour
 
 	public void RecieveMessage()
 	{
-		Debug.Log("RecieveMessage");
+		// Debug.Log("RecieveMessage");
 		try
 		{
 			int i = 0;
@@ -98,11 +98,11 @@ public class NetTransporter : MonoBehaviour
 				// Process the data sent by the client.
 				// data = data.ToUpper();
 
-				// byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+				byte[] msg = System.Text.Encoding.ASCII.GetBytes(JsonUtility.ToJson(player.transform.position));
 
 				// // Send back a response.
-				// stream.Write(msg, 0, msg.Length);
-				// Debug.Log("Sent: {0}" + data);
+				stream.Write(msg, 0, msg.Length);
+				Debug.Log("Sent: {0}" + data);
 			}
 
 			// Shutdown and end connection
