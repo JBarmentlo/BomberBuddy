@@ -5,9 +5,10 @@ using UnityEngine;
 public class BoomBoom : MonoBehaviour
 {
     public  GameObject  explosionPrefab;
+    // public  GameObject  cc;
     public  LayerMask   levelMask;
     private bool        exploded = false;
-    public  int         bombRange = 3;
+    public  int         bombRange;
 
     public System.Action       bombcountreset;
 
@@ -20,6 +21,7 @@ public class BoomBoom : MonoBehaviour
 
     void Explode()
     {
+        exploded = true;
         Instantiate(explosionPrefab, transform.position, Quaternion.identity); //1
         bombcountreset();
         StartCoroutine(CreateExplosions(Vector3.forward));
@@ -28,18 +30,19 @@ public class BoomBoom : MonoBehaviour
         StartCoroutine(CreateExplosions(Vector3.left));  
 
         GetComponent<MeshRenderer>().enabled = false;
-        exploded = true;
         transform.Find("Collider").gameObject.SetActive(false);
         Destroy(gameObject, .3f); // ! SHORTEN THIS
     }
 
     private IEnumerator CreateExplosions(Vector3 direction) 
     {
+        Debug.Log("Booooon");
         Vector3    rayStart = transform.position; //  + new Vector3(0,.5f,0) 
         for (int i = 1; i < bombRange; i++) 
         {
+            Debug.Log(rayStart);
             RaycastHit hit;
-            Physics.Raycast(rayStart, direction, out hit, i, levelMask); 
+            Physics.Raycast(rayStart, direction, out hit, 1, levelMask);
             rayStart += direction;
             if (!hit.collider) 
             {
@@ -49,10 +52,13 @@ public class BoomBoom : MonoBehaviour
             else if (hit.collider.gameObject.CompareTag("Crate"))
             {
                 hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
-                break;
+                Debug.Log("Fik da crat");
+
+                yield break;
             }
             else 
             {
+                Debug.Log("Stop " + hit.collider.name);
                 break; 
             }
             yield return new WaitForSeconds(.05f); 

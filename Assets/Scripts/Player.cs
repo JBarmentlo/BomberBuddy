@@ -44,12 +44,9 @@ public class Player : GlobalStateLink
     public  bool        canMove = true;
     public  float       moveSpeed = 5f;
     public  int         bombs = 2;
-    public  int         bombRange = 3;
+    public  int         bombRange;
     public  bool        dead = false;
     
-    [SerializeField]
-    private Vector3     pos = new Vector3();
-
     public GameObject   bombPrefab;
 
     //Cached components
@@ -252,7 +249,7 @@ public class Player : GlobalStateLink
 
     public override string JsonRep()
     {
-        pos = this.gameObject.transform.position;
+        position = this.gameObject.transform.position;
         return JsonUtility.ToJson(this);
     }
 }

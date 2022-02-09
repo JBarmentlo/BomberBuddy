@@ -114,18 +114,18 @@ public class NetTransporter : MonoBehaviour
 			if((stream.DataAvailable) && (i = stream.Read(bytes, 0, bytes.Length))!=0)
 			{
 				data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-				Debug.Log("Received: {0}" + data);
+				// Debug.Log("Received: {0}" + data);
 
 				ActionMessage a = JsonUtility.FromJson<ActionMessage>(data);
-				Debug.Log("Parsed: " + a);
+				// Debug.Log("Parsed: " + a);
 				player.DoAction(a.action);
-				Debug.Log("did a");
+				// Debug.Log("did a");
 
 				// byte[] msg = System.Text.Encoding.ASCII.GetBytes("testzs");
 				byte[] msg = System.Text.Encoding.ASCII.GetBytes(GlobalStateManager.Instance.GetState());
 
 				stream.Write(msg, 0, msg.Length);
-				Debug.Log("Sent: {0}" + data);
+				// Debug.Log("Sent: {0}" + data);
 			}
 		}
 		catch(SocketException e)

@@ -12,6 +12,7 @@ public class CrateDestroy : MonoBehaviour
 
     public void ExplodeCrate()
     {
+        Debug.Log("DROP " + this);
         int dropIdx = Mathf.FloorToInt(Random.Range(0, drops.Count));
         Instantiate(drops[dropIdx], transform.position, Quaternion.identity);
         Destroy(gameObject);

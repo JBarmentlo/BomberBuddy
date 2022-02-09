@@ -81,23 +81,31 @@ public class GlobalStateManager : MonoBehaviour
 
     public void AddGameObject(GlobalStateLink obj)
     {
-        Debug.Log("GSL Added: " + obj);
-        Debug.Log(obj.JsonRep());
+        // Debug.Log("GSL Added: " + obj);
+        // Debug.Log(obj.JsonRep());
         stateList.Add(obj);
     }
     public void RemoveGameObject(GlobalStateLink obj)
     {
-        Debug.Log("GSL Removed: " + obj);
+        // Debug.Log("GSL Removed: " + obj);
         stateList.Remove(obj);
     }
 
+    // public void LateUpdate()
+    // {
+    //     stateList.RemoveAt(0);
+    // }
+
     public string GetState()
     {
-        string s = "";
-        foreach (GlobalStateLink obj in stateList)
+        string s = "[";
+        for (int i = 0; i < stateList.Count; i++)
         {
-            s += obj.JsonRep();
+            s += stateList[i].JsonRep();
+            if (i != stateList.Count - 1)
+                s += ",";
         }
+        s += "]";
         return s;
     }
 }
