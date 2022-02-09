@@ -30,14 +30,33 @@ public class ActionMessage
 
 public class NetTransporter : MonoBehaviour
 {
-	private TcpListener 	server 	= null;
-	private TcpClient 		client 	= null;
-	private NetworkStream 	stream 	= null;
+	
+    private static NetTransporter _instance;
+    public  static NetTransporter Instance { get { return _instance; } }
 
-	public	Player			player;
+	private TcpListener 	server 	= null;
+	private List<TcpClient>	clients = new List<TcpClient>();
+	// private NetworkStream 	stream 	= null;
+
+	public	List<Player>	players;
+
+	private int				nPlayers = 2;
 
 	private Byte[] 			bytes 	= new Byte[256];
 	private String 			data 	= null;
+
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        } else {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+
 
 	private void StartListenerServer()
 	{
@@ -55,39 +74,45 @@ public class NetTransporter : MonoBehaviour
 	}
 
 
-	public void AcceptConnection()
+	bool        ValidateConnection(TcpClient newClient)
+	{
+		return true;
+	}
+
+
+	public void AcceptConnections()
 	{
 		if (server.Pending() == false)
 		{
 			Debug.Log("There are no pending connecttions");
 			return;
 		}
-		if (client == null)
+		while (server.Pending() && (clients.Count < nPlayers))
 		{
 			Debug.Log("Waiting for a connection... ");
-			// JsonUtility.FromJson
-			// Perform a blocking call to accept requests.
-			// You could also use server.AcceptSocket() here.
-			client = server.AcceptTcpClient();
-			Debug.Log("Connected!");
-			stream = client.GetStream();
-			server.Stop();
+			TcpClient client = server.AcceptTcpClient();
+			if (ValidateConnection(client))
+			{
+				clients.Add(client);
+				Debug.Log("Connected!");
+			}
+			else
+			{
+				Debug.Log("Rejected!");
+			}
 		}
 	}
 
 
-	public void RecieveMessage()
+	public void RecieveMessage(NetworkStream stream, Player player)
 	{
 		// Debug.Log("RecieveMessage");
 		try
 		{
 			int i = 0;
-			// Byte[] bytes 	= new Byte[256];
 			Array.Clear(bytes, 0, 256);
-			// Loop to receive all the data sent by the client.
 			if((stream.DataAvailable) && (i = stream.Read(bytes, 0, bytes.Length))!=0)
 			{
-				// Translate data bytes to a ASCII string.
 				data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
 				Debug.Log("Received: {0}" + data);
 
@@ -95,47 +120,45 @@ public class NetTransporter : MonoBehaviour
 				Debug.Log("Parsed: " + a);
 				player.DoAction(a.action);
 				Debug.Log("did a");
-				// Process the data sent by the client.
-				// data = data.ToUpper();
 
-				byte[] msg = System.Text.Encoding.ASCII.GetBytes(JsonUtility.ToJson(player.transform.position));
+				// byte[] msg = System.Text.Encoding.ASCII.GetBytes("testzs");
+				byte[] msg = System.Text.Encoding.ASCII.GetBytes(GlobalStateManager.Instance.GetState());
 
-				// // Send back a response.
 				stream.Write(msg, 0, msg.Length);
 				Debug.Log("Sent: {0}" + data);
 			}
-
-			// Shutdown and end connection
-			// client.Close(); 
-			// !
 		}
 		catch(SocketException e)
 		{
-			Debug.Log("SocketException: {0}" + e);
+			Debug.LogError("SocketException: {0}" + e);
 		}
-		finally
-		{
-			// Stop listening for new clients.
-			// server.Stop();
-		}
-
-		// Debug.Log("\nHit enter to continue...");
-		// Console.Read();
 	}
+
+
+	public void RecieveAllMessages()
+	{
+		for (int i = 0; i < clients.Count ;i++)
+		{
+			RecieveMessage(clients[i].GetStream(), players[i]);
+		}
+	}
+
 
 	public void Start()
 	{
 		StartListenerServer();
-		// ActionMessage a;
-		// a.action = ActionEnum.Up;
-		// Debug.Log("JSON " + JsonUtility.ToJson(a));
 	}
+
 
 	public void Update()
 	{
-		if (client != null)
-		{
-			RecieveMessage();
-		}
+		RecieveAllMessages();
+	}
+
+
+	void 		OnDestroy()
+	{
+		if (server != null)
+			server.Stop();
 	}
 }

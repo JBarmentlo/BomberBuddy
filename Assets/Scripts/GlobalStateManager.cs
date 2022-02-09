@@ -3,15 +3,30 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class ResponseObject
+{
+    [SerializeField]
+    public Vector3 pos;
+    // float y;
 
+    public string JsonRep;
+
+}
 
 public class GlobalStateManager : MonoBehaviour
 {
-    private static GlobalStateManager _instance;
-    public  static GlobalStateManager Instance { get { return _instance; } }
+    private static GlobalStateManager _instance = null;
+    public static GlobalStateManager Instance { get { return _instance; } }
+
+    private List<GlobalStateLink> stateList = new List<GlobalStateLink>();
+
     private int deadPlayers = 0;
     private int deadPlayerNumber = -1;  
-    private int winnerNum;  
+    private int winnerNum;
+    // private int w = 10;
+    // private int h = 9;
+
 
     GameObject menu;
 
@@ -63,4 +78,26 @@ public class GlobalStateManager : MonoBehaviour
         menu.GetComponent<MenuManager>().DisplayWinner(winnerNum);
     }  
 
+
+    public void AddGameObject(GlobalStateLink obj)
+    {
+        Debug.Log("GSL Added: " + obj);
+        Debug.Log(obj.JsonRep());
+        stateList.Add(obj);
+    }
+    public void RemoveGameObject(GlobalStateLink obj)
+    {
+        Debug.Log("GSL Removed: " + obj);
+        stateList.Remove(obj);
+    }
+
+    public string GetState()
+    {
+        string s = "";
+        foreach (GlobalStateLink obj in stateList)
+        {
+            s += obj.JsonRep();
+        }
+        return s;
+    }
 }

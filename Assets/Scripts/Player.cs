@@ -32,23 +32,24 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class Player : MonoBehaviour
+public class Player : GlobalStateLink
 {
 
     [Range(1, 2)]
     public  int         playerNumber = 1;
     [Range(1, 5)]
+    [NonSerialized]
     public  bool        canDropBombs = true;
+    [NonSerialized]
     public  bool        canMove = true;
     public  float       moveSpeed = 5f;
     public  int         bombs = 2;
     public  int         bombRange = 3;
-
-
     public  bool        dead = false;
-    // public  GlobalStateManager  globalManager;
+    
+    [SerializeField]
+    private Vector3     pos = new Vector3();
 
-    //Prefabs
     public GameObject   bombPrefab;
 
     //Cached components
@@ -57,16 +58,21 @@ public class Player : MonoBehaviour
     private Transform   myTransform;
     private Animator    animator;
 
+
     // Use this for initialization
-    void Start()
+    public override void Start()
     {
+        base.Start();
         //Cache the attached components for better performance and less typing
         rigidBody = GetComponent<Rigidbody>();
         playerCollider   = GetComponent<CapsuleCollider>();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
     }
-
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
     // Update is called once per frame
     void Update()
     {
@@ -242,5 +248,11 @@ public class Player : MonoBehaviour
             GlobalStateManager.Instance.PlayerDied(playerNumber);
             Destroy(gameObject);
         }
+    }
+
+    public override string JsonRep()
+    {
+        pos = this.gameObject.transform.position;
+        return JsonUtility.ToJson(this);
     }
 }
