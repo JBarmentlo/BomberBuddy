@@ -76,6 +76,8 @@ public class Player : GlobalStateLink
         UpdateMovement();
     }
 
+
+
     private void UpdateMovement()
     {
         animator.SetBool("Walking", false);

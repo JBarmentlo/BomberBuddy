@@ -36,11 +36,9 @@ public class BoomBoom : MonoBehaviour
 
     private IEnumerator CreateExplosions(Vector3 direction) 
     {
-        Debug.Log("Booooon");
         Vector3    rayStart = transform.position; //  + new Vector3(0,.5f,0) 
         for (int i = 1; i < bombRange; i++) 
         {
-            Debug.Log(rayStart);
             RaycastHit hit;
             Physics.Raycast(rayStart, direction, out hit, 1, levelMask);
             rayStart += direction;
@@ -52,13 +50,11 @@ public class BoomBoom : MonoBehaviour
             else if (hit.collider.gameObject.CompareTag("Crate"))
             {
                 hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
-                Debug.Log("Fik da crat");
 
                 yield break;
             }
             else 
             {
-                Debug.Log("Stop " + hit.collider.name);
                 break; 
             }
             yield return new WaitForSeconds(.05f); 

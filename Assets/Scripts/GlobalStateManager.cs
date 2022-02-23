@@ -103,7 +103,7 @@ public class GlobalStateManager : MonoBehaviour
         {
             s += stateList[i].JsonRep();
             if (i != stateList.Count - 1)
-                s += ",";
+                s += ",\n\n";
         }
         s += "]";
         return s;
