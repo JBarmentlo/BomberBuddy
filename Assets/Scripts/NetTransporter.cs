@@ -26,7 +26,10 @@ public class ActionMessage
 {
 	// String action;
 	public ActionEnum	action;
+	public int			playerNum;
+	public string		pass;
 }
+
 
 public class NetTransporter : MonoBehaviour
 {
@@ -38,9 +41,9 @@ public class NetTransporter : MonoBehaviour
 	private List<TcpClient>	clients = new List<TcpClient>();
 	// private NetworkStream 	stream 	= null;
 
-	public	List<Player>	players;
+	// public	List<Player>	players;
 
-	private int				nPlayers = 2;
+	private int				nPlayers { get { return GlobalStateManager.Instance.MaxPlayers ; } }
 
 	private Byte[] 			bytes 	= new Byte[256];
 	private String 			data 	= null;
@@ -104,7 +107,7 @@ public class NetTransporter : MonoBehaviour
 	}
 
 
-	public void RecieveMessage(NetworkStream stream, Player player)
+	public void RecieveMessage(NetworkStream stream)
 	{
 		// Debug.Log("RecieveMessage");
 		try
@@ -117,8 +120,9 @@ public class NetTransporter : MonoBehaviour
 				// Debug.Log("Received: {0}" + data);
 
 				ActionMessage a = JsonUtility.FromJson<ActionMessage>(data);
-				// Debug.Log("Parsed: " + a);
-				player.DoAction(a.action);
+				
+				// Debug.Log("Parsed: " + a.action + " player: " + a.playerNum);
+				GlobalStateManager.Instance.DoAction(a.action, a.playerNum);
 				// Debug.Log("did a");
 
 				// byte[] msg = System.Text.Encoding.ASCII.GetBytes("testzs");
@@ -139,7 +143,7 @@ public class NetTransporter : MonoBehaviour
 	{
 		for (int i = 0; i < clients.Count ;i++)
 		{
-			RecieveMessage(clients[i].GetStream(), players[i]);
+			RecieveMessage(clients[i].GetStream());
 		}
 	}
 

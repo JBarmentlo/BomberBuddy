@@ -3,6 +3,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// int N_PLAYERS = 2;
+
 [System.Serializable]
 public class ResponseObject
 {
@@ -16,13 +18,20 @@ public class ResponseObject
 
 public class GlobalStateManager : MonoBehaviour
 {
-    private static GlobalStateManager _instance = null;
-    public static GlobalStateManager Instance { get { return _instance; } }
+    private static 	GlobalStateManager 		_instance 	= null;
+    public static 	GlobalStateManager 		Instance 	{ get { return _instance; } }
 
-    private List<GlobalStateLink> stateList = new List<GlobalStateLink>();
+    private 		List<GlobalStateLink> 	stateList;
 
-    private int deadPlayers = 0;
-    private int deadPlayerNumber = -1;  
+	private			List<Player>			playerList;
+
+	public			List<GameObject>		playerPrefabList;
+
+    public 	int 	MaxPlayers 	{ get { return playerPrefabList.Count ; } }
+
+
+    private int deadPlayers 		= 0;
+    private int deadPlayerNumber 	= -1;  
     private int winnerNum;
     // private int w = 10;
     // private int h = 9;
@@ -38,6 +47,10 @@ public class GlobalStateManager : MonoBehaviour
         } else {
             _instance = this;
             DontDestroyOnLoad(gameObject);
+			stateList 	= new List<GlobalStateLink>();
+			playerList  = new List<Player>();
+			InstantiatePlayer(1);
+			InstantiatePlayer(2);
         }
     }
 
@@ -52,7 +65,7 @@ public class GlobalStateManager : MonoBehaviour
         }  
     }
 
-    void CheckPlayersDeath() 
+    void 		CheckPlayersDeath() 
     {
         if (deadPlayers == 1) 
         { 
@@ -79,22 +92,53 @@ public class GlobalStateManager : MonoBehaviour
     }  
 
 
+
+	public Player		InstantiatePlayer(int playerNum) // starts at 1
+	{
+		if (playerNum > this.MaxPlayers)
+		{
+			Debug.LogError("trying to instanciate a player with playernum > maxplayers");
+			return null;
+		}
+		else
+		{
+			return Instantiate(this.playerPrefabList[playerNum - 1]).GetComponent<Player>();
+		}
+	}
+
+
+	private Player		FindPlayer(int playerNum)
+	{
+		// Debug.Log(playerNum);
+		// Debug.Log(playerList);
+		// Debug.Log(	playerList.Find(x => x.playerNumber == playerNum));
+		return playerList.Find(x => x.playerNumber == playerNum);
+
+	}
+
+	public void			DoAction(ActionEnum a, int playerNum)
+	{
+		FindPlayer(playerNum).DoAction(a);
+	}
+
     public void AddGameObject(GlobalStateLink obj)
     {
         // Debug.Log("GSL Added: " + obj);
         // Debug.Log(obj.JsonRep());
-        stateList.Add(obj);
+		if (obj.is_player)
+			playerList.Add((Player)obj);
+		else
+        	stateList.Add(obj);
     }
+
     public void RemoveGameObject(GlobalStateLink obj)
     {
         // Debug.Log("GSL Removed: " + obj);
-        stateList.Remove(obj);
+		if (obj.is_player)
+			playerList.Remove((Player)obj);
+		else
+        	stateList.Remove(obj);
     }
-
-    // public void LateUpdate()
-    // {
-    //     stateList.RemoveAt(0);
-    // }
 
     public string GetState()
     {
@@ -103,9 +147,18 @@ public class GlobalStateManager : MonoBehaviour
         {
             s += stateList[i].JsonRep();
             if (i != stateList.Count - 1)
+				s += ",\n\n";
+        }
+		for (int i = 0; i < playerList.Count; i++)
+        {
+			if ((i == 0) && (stateList.Count != 0))
+				s += ",\n\n";
+            s += stateList[i].JsonRep();
+            if (i != playerList.Count - 1)
                 s += ",\n\n";
         }
         s += "]";
         return s;
     }
+
 }

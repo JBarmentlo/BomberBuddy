@@ -18,7 +18,9 @@ public enum StateLinkType
 
 public class GlobalStateLink : MonoBehaviour
 {
-    public StateLinkType type;
+    public StateLinkType 	type;
+    public bool 			is_player = false;
+
 
     [SerializeField]
     public Vector3          position = new Vector3();
