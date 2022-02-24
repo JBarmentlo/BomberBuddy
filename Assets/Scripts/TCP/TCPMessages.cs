@@ -39,6 +39,7 @@ public class PlayerMessage
 public class AcceptRequestMessage
 {
 	public ClientTypeEnum 	requestedType;
+	public int			 	playerNum;
 	public string			pass;
 }
 

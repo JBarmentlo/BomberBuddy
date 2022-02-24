@@ -76,7 +76,11 @@ public abstract class Client
 	/// <returns>true if TCP connected</returns>
 	public bool IsAlive()
 	{
-		return (true);
+		// NetworkStream stream = tcpClient.GetStream();
+		// stream.Write(new byte[0], 0, 0);
+		// tcpClient.Client.Receive(bytes, SocketFlags.Peek);
+		// TClient.Client.Receive(buff, SocketFlags.Peek) == 0
+		return (tcpClient.Connected);
 	}
 }
 
@@ -96,10 +100,24 @@ public class UntypedClient : Client
 		return JsonUtility.FromJson<AcceptRequestMessage>(data);
 	}
 
+	/// <summary>
+	/// Multiple connections for same player possible !!!!
+	/// </summary>
+	/// <returns></returns>
 	public override	Client HandleMsg()
 	{
-		Debug.Log("Handle Basic: {0}" + ParseMsg(data));
-		return new PlayerClient(this.tcpClient, 1);
+		Debug.Log("Handle Basic");
+		AcceptRequestMessage msg = ParseMsg(data);
+		if (msg.requestedType == ClientTypeEnum.Player)
+		{
+			msg.playerNum = (msg.playerNum == -1) ? GlobalStateManager.Instance.GetAvailablePlayerNum() : msg.playerNum;
+			if (msg.playerNum != -1 && NetTransporter.Instance.ValidatePlayerRequest(msg.playerNum, msg.pass))
+			{
+				GlobalStateManager.Instance.InstantiatePlayer(msg.playerNum);
+				return new PlayerClient(this.tcpClient, msg.playerNum);
+			}
+		}
+		return this;
 	}
 }
 

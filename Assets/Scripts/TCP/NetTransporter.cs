@@ -19,8 +19,12 @@ public class NetTransporter : MonoBehaviour
     private static NetTransporter _instance;
     public  static NetTransporter Instance { get { return _instance; } }
 
+    public string[] psw = {"default1", "default2"};
+
+
 	private TcpListener 		server 			= null;
 	private List<Client>		clients 		= new List<Client>();
+	
 	// private List<PlayerClient>	playerClients	= new List<PlayerClient>();
 
 	// private NetworkStream 	stream 	= null;
@@ -63,7 +67,10 @@ public class NetTransporter : MonoBehaviour
 	{
 		return true;
 	}
-
+	public bool        ValidatePlayerRequest(int playerNum, string pass)
+	{
+		return true;
+	}
 
 	public void AcceptConnections()
 	{
@@ -88,11 +95,30 @@ public class NetTransporter : MonoBehaviour
 		}
 	}
 
+	public void CleanDeadClients()
+	{
+		for (int i = 0; i < clients.Count ;i++)
+		{
+			clients[i].RecieveMessage();
+			if (!clients[i].RecievedMessage())
+				continue;
+			clients[i] = clients[i].HandleMsg();
+			clients[i].SendMessage(GlobalStateManager.Instance.GetState());
+		}
+	}
+
 
 	public void RecieveAllMessages()
 	{
 		for (int i = 0; i < clients.Count ;i++)
 		{
+			if (!clients[i].IsAlive())
+			{
+				clients.RemoveAt(i);
+				Debug.LogError("client connection lost");
+				i--;
+				continue;
+			}
 			clients[i].RecieveMessage();
 			if (!clients[i].RecievedMessage())
 				continue;

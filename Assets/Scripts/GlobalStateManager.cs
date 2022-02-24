@@ -49,8 +49,8 @@ public class GlobalStateManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 			stateList 	= new List<GlobalStateLink>();
 			playerList  = new List<Player>();
-			InstantiatePlayer(1);
-			InstantiatePlayer(2);
+			// InstantiatePlayer(1);
+			// InstantiatePlayer(2);
         }
     }
 
@@ -91,6 +91,23 @@ public class GlobalStateManager : MonoBehaviour
         menu.GetComponent<MenuManager>().DisplayWinner(winnerNum);
     }  
 
+
+	/// <summary>
+	/// Returns the first available player number
+	/// -1 if none
+	/// </summary>
+	/// <returns></returns>
+	public int		GetAvailablePlayerNum()
+	{
+		for (int i = 1; i <= MaxPlayers; i++)
+		{
+			if (FindPlayer(i) == null)
+			{
+				return (i);
+			}
+		}
+		return (-1);
+	}
 
 
 	public Player		InstantiatePlayer(int playerNum) // starts at 1
