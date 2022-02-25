@@ -97,7 +97,7 @@ public class GlobalStateManager : MonoBehaviour
 	/// -1 if none
 	/// </summary>
 	/// <returns></returns>
-	public int		GetAvailablePlayerNum()
+	public int			GetAvailablePlayerNum()
 	{
 		for (int i = 1; i <= MaxPlayers; i++)
 		{
@@ -138,7 +138,7 @@ public class GlobalStateManager : MonoBehaviour
 		FindPlayer(playerNum).DoAction(a);
 	}
 
-    public void AddGameObject(GlobalStateLink obj)
+    public void 		AddGameObject(GlobalStateLink obj)
     {
         // Debug.Log("GSL Added: " + obj);
         // Debug.Log(obj.JsonRep());
@@ -148,7 +148,7 @@ public class GlobalStateManager : MonoBehaviour
         	stateList.Add(obj);
     }
 
-    public void RemoveGameObject(GlobalStateLink obj)
+    public void 		RemoveGameObject(GlobalStateLink obj)
     {
         // Debug.Log("GSL Removed: " + obj);
 		if (obj.is_player)
@@ -170,7 +170,7 @@ public class GlobalStateManager : MonoBehaviour
         {
 			if ((i == 0) && (stateList.Count != 0))
 				s += ",\n\n";
-            s += stateList[i].JsonRep();
+            s += playerList[i].JsonRep();
             if (i != playerList.Count - 1)
                 s += ",\n\n";
         }

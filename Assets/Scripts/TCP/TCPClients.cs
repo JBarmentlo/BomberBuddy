@@ -12,11 +12,14 @@ using System.Text;
 /// </summary>
 public abstract class Client
 {
-	protected	Byte[] 			bytes 	= new Byte[256];
-	protected	String 			data 	= null;
+	protected	Byte[] 			bytes 		= new Byte[256];
+	protected	String 			data 		= null;
+	public		bool			removeMe	= false;
 	public		TcpClient		tcpClient;
 
+
 	public abstract Client HandleMsg();
+
 
 	public bool RecievedMessage()
 	{
@@ -47,6 +50,7 @@ public abstract class Client
 		}
 	}
 
+
 	public void	SendMessage(string message)
 	{
 		data = null;
@@ -56,6 +60,8 @@ public abstract class Client
 			if (stream.CanWrite)
 			{
 				byte[] bytesMsg = System.Text.Encoding.ASCII.GetBytes(message);
+				byte[] bytesMsgLen = System.Text.Encoding.ASCII.GetBytes(bytesMsg.Length.ToString("D8"));
+				stream.Write(bytesMsgLen, 0, bytesMsgLen.Length);
 				stream.Write(bytesMsg, 0, bytesMsg.Length);
 			}
 			else
@@ -68,6 +74,7 @@ public abstract class Client
 			Debug.LogError("SocketException: {0}" + e);
 		}
 	}
+
 
 	/// <summary>
 	/// NOT IMPLEMENTED YET !    
@@ -106,6 +113,8 @@ public class UntypedClient : Client
 	/// <returns></returns>
 	public override	Client HandleMsg()
 	{
+		// if (!RecievedMessage())
+		// 	return this;
 		Debug.Log("Handle Basic");
 		AcceptRequestMessage msg = ParseMsg(data);
 		if (msg.requestedType == ClientTypeEnum.Player)
@@ -114,6 +123,7 @@ public class UntypedClient : Client
 			if (msg.playerNum != -1 && NetTransporter.Instance.ValidatePlayerRequest(msg.playerNum, msg.pass))
 			{
 				GlobalStateManager.Instance.InstantiatePlayer(msg.playerNum);
+				NetTransporter.Instance.SetRemoveMePlayer(msg.playerNum);
 				return new PlayerClient(this.tcpClient, msg.playerNum);
 			}
 		}
@@ -127,7 +137,7 @@ public class UntypedClient : Client
 /// </summary>
 public class PlayerClient : Client
 {
-	int 	playerNum;
+	public int 	playerNum;
 
 	public PlayerClient(TcpClient tcpClient, int playerNum) 
 	{
@@ -145,6 +155,8 @@ public class PlayerClient : Client
 	{
 		try
 		{
+			if (!RecievedMessage())
+				return this;
 			Debug.Log("Handle Player: {0}" + data);
 			PlayerMessage msg = (PlayerMessage)ParseMsg(data);
 			GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);

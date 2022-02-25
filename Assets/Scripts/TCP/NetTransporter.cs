@@ -19,7 +19,7 @@ public class NetTransporter : MonoBehaviour
     private static NetTransporter _instance;
     public  static NetTransporter Instance { get { return _instance; } }
 
-    public string[] psw = {"default1", "default2"};
+    private string[] psw = {"default1", "default2"};
 
 
 	private TcpListener 		server 			= null;
@@ -67,16 +67,19 @@ public class NetTransporter : MonoBehaviour
 	{
 		return true;
 	}
-	public bool        ValidatePlayerRequest(int playerNum, string pass)
+
+
+	public bool	ValidatePlayerRequest(int playerNum, string pass)
 	{
 		return true;
 	}
+
 
 	public void AcceptConnections()
 	{
 		if (server.Pending() == false)
 		{
-			Debug.Log("There are no pending connecttions");
+			// Debug.Log("There are no pending connecttions");
 			return;
 		}
 		while (server.Pending() && (clients.Count < nPlayers))
@@ -95,36 +98,34 @@ public class NetTransporter : MonoBehaviour
 		}
 	}
 
-	public void CleanDeadClients()
+
+	public void RemoveDeadClients()
 	{
-		for (int i = 0; i < clients.Count ;i++)
-		{
-			clients[i].RecieveMessage();
-			if (!clients[i].RecievedMessage())
-				continue;
-			clients[i] = clients[i].HandleMsg();
-			clients[i].SendMessage(GlobalStateManager.Instance.GetState());
-		}
+		clients.RemoveAll(x => x.removeMe);
+	}
+
+	/// <summary>
+	/// If any playerClients for playerNum are present they are removed (removeMe is set to true and they are removed later)
+	/// </summary>
+	/// <param name="playerNum"> Number of the controlled player</param>
+	public void SetRemoveMePlayer(int playerNum)
+	{
+		clients.FindAll(x => (x.GetType() == typeof(PlayerClient)) && (((PlayerClient)x).playerNum == playerNum)).ForEach(x => x.removeMe = true);
 	}
 
 
 	public void RecieveAllMessages()
 	{
+		// clients.ForEach(DoClientCycle);
 		for (int i = 0; i < clients.Count ;i++)
 		{
-			if (!clients[i].IsAlive())
-			{
-				clients.RemoveAt(i);
-				Debug.LogError("client connection lost");
-				i--;
-				continue;
-			}
 			clients[i].RecieveMessage();
 			if (!clients[i].RecievedMessage())
 				continue;
 			clients[i] = clients[i].HandleMsg();
 			clients[i].SendMessage(GlobalStateManager.Instance.GetState());
 		}
+		RemoveDeadClients();
 	}
 
 
@@ -136,6 +137,7 @@ public class NetTransporter : MonoBehaviour
 
 	public void Update()
 	{
+		AcceptConnections();
 		RecieveAllMessages();
 	}
 
