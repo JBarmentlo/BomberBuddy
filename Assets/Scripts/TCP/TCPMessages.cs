@@ -38,6 +38,13 @@ public class PlayerMessage
 [System.Serializable]
 public class AcceptRequestMessage
 {
+	public AcceptRequestMessage(ClientTypeEnum type, int pnum)
+	{
+		requestedType 	= type;
+		playerNum 		= pnum;
+		pass			= "";
+	}
+
 	public ClientTypeEnum 	requestedType;
 	public int			 	playerNum;
 	public string			pass;

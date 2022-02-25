@@ -125,9 +125,11 @@ public class UntypedClient : Client
 				if (GlobalStateManager.Instance.FindPlayer(msg.playerNum) == null)
 					GlobalStateManager.Instance.InstantiatePlayer(msg.playerNum);
 				NetTransporter.Instance.SetRemoveMePlayer(msg.playerNum);
+				SendMessage(JsonUtility.ToJson(msg));
 				return new PlayerClient(this.tcpClient, msg.playerNum);
 			}
 		}
+		SendMessage(JsonUtility.ToJson(new AcceptRequestMessage(ClientTypeEnum.Untyped, -1)));
 		return this;
 	}
 }
@@ -161,6 +163,7 @@ public class PlayerClient : Client
 			Debug.Log("Handle Player: {0}" + data);
 			PlayerMessage msg = (PlayerMessage)ParseMsg(data);
 			GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);
+			SendMessage(GlobalStateManager.Instance.GetState());
 			return this;
 		}
 		catch

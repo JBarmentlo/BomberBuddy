@@ -128,7 +128,7 @@ public class NetTransporter : MonoBehaviour
 			if (!clients[i].RecievedMessage())
 				continue;
 			clients[i] = clients[i].HandleMsg();
-			clients[i].SendMessage(GlobalStateManager.Instance.GetState());
+			// clients[i].SendMessage(GlobalStateManager.Instance.GetState());
 		}
 		RemoveDeadClients();
 	}
