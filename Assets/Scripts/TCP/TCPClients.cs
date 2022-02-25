@@ -122,7 +122,8 @@ public class UntypedClient : Client
 			msg.playerNum = (msg.playerNum == -1) ? GlobalStateManager.Instance.GetAvailablePlayerNum() : msg.playerNum;
 			if (msg.playerNum != -1 && NetTransporter.Instance.ValidatePlayerRequest(msg.playerNum, msg.pass))
 			{
-				GlobalStateManager.Instance.InstantiatePlayer(msg.playerNum);
+				if (GlobalStateManager.Instance.FindPlayer(msg.playerNum) == null)
+					GlobalStateManager.Instance.InstantiatePlayer(msg.playerNum);
 				NetTransporter.Instance.SetRemoveMePlayer(msg.playerNum);
 				return new PlayerClient(this.tcpClient, msg.playerNum);
 			}

@@ -68,7 +68,12 @@ public class NetTransporter : MonoBehaviour
 		return true;
 	}
 
-
+	/// <summary>
+	/// Skelly returns TRUE ALWAYS
+	/// </summary>
+	/// <param name="playerNum"></param>
+	/// <param name="pass"></param>
+	/// <returns></returns>
 	public bool	ValidatePlayerRequest(int playerNum, string pass)
 	{
 		return true;

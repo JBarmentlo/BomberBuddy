@@ -124,7 +124,7 @@ public class GlobalStateManager : MonoBehaviour
 	}
 
 
-	private Player		FindPlayer(int playerNum)
+	public Player		FindPlayer(int playerNum)
 	{
 		// Debug.Log(playerNum);
 		// Debug.Log(playerList);
