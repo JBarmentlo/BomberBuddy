@@ -57,7 +57,7 @@ public class Player : GlobalStateLink
 
 
     // Use this for initialization
-    public override void Start()
+    public override void 	Start()
     {
         base.Start();
         //Cache the attached components for better performance and less typing
@@ -65,20 +65,20 @@ public class Player : GlobalStateLink
         playerCollider   = GetComponent<CapsuleCollider>();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
+		// DontDestroyOnLoad(this.gameObject);
     }
-    public override void OnDestroy()
+
+    public override void 	OnDestroy()
     {
         base.OnDestroy();
     }
     // Update is called once per frame
-    void Update()
+    void 					Update()
     {
         UpdateMovement();
     }
 
-
-
-    private void UpdateMovement()
+    private void 			UpdateMovement()
     {
         animator.SetBool("Walking", false);
 
@@ -97,11 +97,7 @@ public class Player : GlobalStateLink
         }
     }
 
-    /// <summary>
-    /// Updates Player 1's movement and facing rotation using the WASD keys and drops bombs using Space
-    /// </summary>
-   
-    public  void DoAction(ActionEnum a)
+    public  void			DoAction(ActionEnum a)
     {
         if (a == ActionEnum.Up)
         {
@@ -136,7 +132,8 @@ public class Player : GlobalStateLink
             DropBomb();
         }
     }
-    private void UpdatePlayer1Movement()
+
+    private void 			UpdatePlayer1Movement()
     {
         if(Input.GetKey(KeyCode.W))
         { //Up movement
@@ -175,7 +172,7 @@ public class Player : GlobalStateLink
     /// <summary>
     /// Updates Player 2's movement and facing rotation using the arrow keys and drops bombs using Enter or Return
     /// </summary>
-    private void UpdatePlayer2Movement()
+    private void 			UpdatePlayer2Movement()
     {
         if(Input.GetKey(KeyCode.UpArrow))
         { //Up movement
@@ -212,20 +209,20 @@ public class Player : GlobalStateLink
         }
     }
 
-
-    private Vector3 RoundToGrid(Vector3 pos)
+    private Vector3 		RoundToGrid(Vector3 pos)
     {
         return new Vector3(Mathf.RoundToInt(transform.position.x), transform.position.y, Mathf.RoundToInt(transform.position.z));
     }
 
-    public void BombCountPlusOne()
+    public void 			BombCountPlusOne()
     {
         bombs += 1;
     }
     /// <summary>
     /// Drops a bomb beneath the player
     /// </summary>
-    private void DropBomb()
+
+    private void 			DropBomb()
     {
         if (bombs > 0)
         {
@@ -238,7 +235,8 @@ public class Player : GlobalStateLink
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+ 
+    public void 			OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Explosion"))
         {
@@ -249,7 +247,7 @@ public class Player : GlobalStateLink
         }
     }
 
-    public override string JsonRep()
+    public override string 	JsonRep()
     {
         position = this.gameObject.transform.position;
         return JsonUtility.ToJson(this);
