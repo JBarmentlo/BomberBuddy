@@ -99,6 +99,8 @@ public class Player : GlobalStateLink
 
     public  void			DoAction(ActionEnum a)
     {
+		if (!gameObject.activeSelf)
+			return;
         if (a == ActionEnum.Up)
         {
             rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, moveSpeed);
@@ -243,7 +245,8 @@ public class Player : GlobalStateLink
             Debug.Log("P" + playerNumber + " hit by explosion!");
             dead = true;
             GlobalStateManager.Instance.PlayerDied(playerNumber);
-            Destroy(gameObject);
+			gameObject.SetActive(false);
+            // Destroy(gameObject);
         }
     }
 

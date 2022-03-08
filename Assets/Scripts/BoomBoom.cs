@@ -31,7 +31,7 @@ public class BoomBoom : MonoBehaviour
 
         GetComponent<MeshRenderer>().enabled = false;
         transform.Find("Collider").gameObject.SetActive(false);
-        Destroy(gameObject, .3f); // ! SHORTEN THIS
+        Destroy(gameObject, .1f); // ! SHORTEN THIS
     }
 
     private IEnumerator CreateExplosions(Vector3 direction) 
@@ -41,6 +41,10 @@ public class BoomBoom : MonoBehaviour
         {
             RaycastHit hit;
             Physics.Raycast(rayStart, direction, out hit, 1, levelMask);
+			// if (!hit.collider)
+            // 	Debug.Log("raystart: " + rayStart + " Direction: " + direction + " Hit: nofin");
+			// else
+            // 	Debug.Log("raystart: " + rayStart + " Direction: " + direction + " Hit: "+ hit.collider.gameObject);
             rayStart += direction;
             if (!hit.collider) 
             {

@@ -43,6 +43,7 @@ public class GlobalStateManager : MonoBehaviour
     {
         if (_instance != null && _instance != this)
         {
+			Debug.LogError("destroyed GlobalStateManager");
             Destroy(this.gameObject);
         } else {
             _instance = this;
@@ -119,7 +120,7 @@ public class GlobalStateManager : MonoBehaviour
 		}
 		else
 		{
-			return Instantiate(this.playerPrefabList[playerNum - 1]).GetComponent<Player>();
+			return Instantiate(this.playerPrefabList[playerNum - 1], MapCreatorScript.Instance.GetPlayerStartCoord(playerNum), this.playerPrefabList[playerNum - 1].transform.rotation).GetComponent<Player>();
 		}
 	}
 
@@ -135,7 +136,10 @@ public class GlobalStateManager : MonoBehaviour
 
 	public void			DoAction(ActionEnum a, int playerNum)
 	{
-		FindPlayer(playerNum).DoAction(a);
+		if (a == ActionEnum.Reset)
+			Reset();
+		else
+			FindPlayer(playerNum).DoAction(a);
 	}
 
     public void 		AddGameObject(GlobalStateLink obj)
@@ -157,7 +161,7 @@ public class GlobalStateManager : MonoBehaviour
         	stateList.Remove(obj);
     }
 
-    public string GetState()
+    public string 		GetState()
     {
         string s = "[";
         for (int i = 0; i < stateList.Count; i++)
@@ -168,6 +172,8 @@ public class GlobalStateManager : MonoBehaviour
         }
 		for (int i = 0; i < playerList.Count; i++)
         {
+			if (!playerList[i].gameObject.activeSelf)
+				continue;
 			if ((i == 0) && (stateList.Count != 0))
 				s += ",\n\n";
             s += playerList[i].JsonRep();
@@ -178,4 +184,19 @@ public class GlobalStateManager : MonoBehaviour
         return s;
     }
 
+	public void			Reset()
+	{
+		MapCreatorScript.Instance.ResetMap();
+		foreach (Player p in playerList)
+		{
+			InstantiatePlayer(p.playerNumber);
+			Destroy(p.gameObject);
+		}
+		foreach (GlobalStateLink p in stateList)
+		{
+			if (p.type == StateLinkType.ExtraBomb || p.type == StateLinkType.ExtraRange || p.type == StateLinkType.ExtraSpeed)
+				Destroy(p.gameObject);
+		}
+	}
 }
+

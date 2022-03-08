@@ -10,7 +10,8 @@ public enum ActionEnum
 	Down,
 	Left,
 	Right,
-	Bomb
+	Bomb,
+	Reset
 };
 
 [System.Serializable]
