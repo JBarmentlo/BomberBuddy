@@ -13,8 +13,18 @@ public class ResponseObject
     // float y;
 
     public string JsonRep;
-
 }
+
+[System.Serializable]
+public struct State
+{
+    [SerializeField]
+    public	List<Player>			playerList;
+
+    [SerializeField]
+    private List<GlobalStateLink> 	stateList;
+}
+
 
 public class GlobalStateManager : MonoBehaviour
 {
@@ -164,21 +174,22 @@ public class GlobalStateManager : MonoBehaviour
     public string 		GetState()
     {
         string s = "[";
+		bool	comma = false;
         for (int i = 0; i < stateList.Count; i++)
         {
-            s += stateList[i].JsonRep();
-            if (i != stateList.Count - 1)
+            if (comma)
 				s += ",\n\n";
+            s += stateList[i].JsonRep();
+			comma = true;
         }
 		for (int i = 0; i < playerList.Count; i++)
         {
 			if (!playerList[i].gameObject.activeSelf)
 				continue;
-			if ((i == 0) && (stateList.Count != 0))
+			if (comma)
 				s += ",\n\n";
+			comma = true;
             s += playerList[i].JsonRep();
-            if (i != playerList.Count - 1)
-                s += ",\n\n";
         }
         s += "]";
         return s;
