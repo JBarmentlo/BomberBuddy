@@ -73,7 +73,7 @@ public class Player : GlobalStateLink
         base.OnDestroy();
     }
     // Update is called once per frame
-    void 					Update()
+	void 					Update()
     {
         UpdateMovement();
     }
@@ -226,15 +226,18 @@ public class Player : GlobalStateLink
 
     private void 			DropBomb()
     {
-        if (bombs > 0)
+        if (bombs > 0 && !GlobalStateManager.Instance.IsOccupiedByBomb(RoundToGrid(transform.position)))
         {
+			// Debug.Log("Dropping bomb w range: " + bombRange);
             bombs -= 1;
+			bombPrefab.GetComponent<BoomBoom>().bombRange = bombRange;
             GameObject bomb = Instantiate(bombPrefab, RoundToGrid(transform.position), bombPrefab.transform.rotation);
             BoomBoom boomboom = bomb.gameObject.GetComponent<BoomBoom>();
             boomboom.bombcountreset = BombCountPlusOne;
             boomboom.bombRange = bombRange;
             // bomb.transform.GetChild(2).gameObject.GetComponent<BombCollide>().SetCollisionIgnore(playerCollider);
         }
+
     }
 
  

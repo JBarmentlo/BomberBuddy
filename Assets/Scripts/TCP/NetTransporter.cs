@@ -87,9 +87,8 @@ public class NetTransporter : MonoBehaviour
 			// Debug.Log("There are no pending connecttions");
 			return;
 		}
-		while (server.Pending() && (clients.Count < nPlayers))
+		while (server.Pending())
 		{
-			// Debug.Log("Waiting for a connection... ");
 			TcpClient client = server.AcceptTcpClient();
 			if (ValidateConnection(client))
 			{

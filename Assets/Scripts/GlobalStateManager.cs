@@ -42,14 +42,14 @@ public class GlobalStateManager : MonoBehaviour
 
     private int deadPlayers 		= 0;
     private int deadPlayerNumber 	= -1;  
-    private int winnerNum;
+    private int winnerNum			= -1;
     // private int w = 10;
     // private int h = 9;
 
 
     GameObject menu;
 
-    private void Awake()
+    private void		 Awake()
     {
         if (_instance != null && _instance != this)
         {
@@ -65,18 +65,18 @@ public class GlobalStateManager : MonoBehaviour
         }
     }
 
-    public void PlayerDied(int playerNumber)
+    public void 		PlayerDied(int playerNumber)
     {
-        deadPlayers++; // 1
+        deadPlayers += 1;
 
         if (deadPlayers == 1) 
-        { // 2
-            deadPlayerNumber = playerNumber; // 3
-            Invoke("CheckPlayersDeath", .3f); // ! we check for a draw here, moght reduce delay ?
+        {
+            deadPlayerNumber = playerNumber;
+			CheckPlayersDeath();
         }  
     }
 
-    void 		CheckPlayersDeath() 
+    void 				CheckPlayersDeath() 
     {
         if (deadPlayers == 1) 
         { 
@@ -96,7 +96,6 @@ public class GlobalStateManager : MonoBehaviour
             winnerNum = 0;
             Debug.Log("The game ended in a draw!");
         }
-        deadPlayers = 0;
         deadPlayerNumber = -1;  
         menu = GameObject.Find("Menu");
         menu.GetComponent<MenuManager>().DisplayWinner(winnerNum);
@@ -175,6 +174,11 @@ public class GlobalStateManager : MonoBehaviour
     {
         string s = "[";
 		bool	comma = false;
+		if (winnerNum != -1)
+		{
+			s += "{\"type\":-1, \"winner\":" + winnerNum + "}";
+			comma = true;
+		}
         for (int i = 0; i < stateList.Count; i++)
         {
             if (comma)
@@ -205,9 +209,26 @@ public class GlobalStateManager : MonoBehaviour
 		}
 		foreach (GlobalStateLink p in stateList)
 		{
-			if (p.type == StateLinkType.ExtraBomb || p.type == StateLinkType.ExtraRange || p.type == StateLinkType.ExtraSpeed)
+			if (p.type == StateLinkType.ExtraBomb || p.type == StateLinkType.ExtraRange || p.type == StateLinkType.ExtraSpeed || p.type == StateLinkType.Bomb)
 				Destroy(p.gameObject);
 		}
+		menu = GameObject.Find("Menu");
+        menu.GetComponent<MenuManager>().StopDisplayWinner(winnerNum);
+		deadPlayers = 0;
+		winnerNum	= -1;
+	}
+
+	public bool			IsOccupiedByBomb(Vector3 pos)
+	{
+		foreach (GlobalStateLink obj in stateList)
+		{
+			if (obj.type == StateLinkType.Bomb && obj.transform.position == pos)
+			{
+				Debug.Log("Bomb Drop Blocked");
+				return (true);
+			}
+		}
+		return (false);
 	}
 }
 

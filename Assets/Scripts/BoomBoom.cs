@@ -31,7 +31,7 @@ public class BoomBoom : MonoBehaviour
 
         GetComponent<MeshRenderer>().enabled = false;
         transform.Find("Collider").gameObject.SetActive(false);
-        Destroy(gameObject, .1f); // ! SHORTEN THIS
+        Destroy(gameObject, .3f); // ! SHORTEN THIS
     }
 
     private IEnumerator CreateExplosions(Vector3 direction) 
@@ -41,6 +41,7 @@ public class BoomBoom : MonoBehaviour
         {
             RaycastHit hit;
             Physics.Raycast(rayStart, direction, out hit, 1, levelMask);
+			// Debug.Log(i);
 			// if (!hit.collider)
             // 	Debug.Log("raystart: " + rayStart + " Direction: " + direction + " Hit: nofin");
 			// else
@@ -49,20 +50,21 @@ public class BoomBoom : MonoBehaviour
             if (!hit.collider) 
             {
                 // Debug.Log((transform.position + (i * direction)));
-                Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation); 
+                Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation);
             }
             else if (hit.collider.gameObject.CompareTag("Crate"))
             {
+                Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation);
                 hit.collider.gameObject.GetComponent<CrateDestroy>().ExplodeCrate();
-
-                yield break;
+                break;
             }
             else 
             {
                 break; 
             }
-            yield return new WaitForSeconds(.05f); 
+            yield return new WaitForSeconds(.03f); 
         }
+		yield break; 
     }  
 
     private void OnTriggerEnter(Collider other)

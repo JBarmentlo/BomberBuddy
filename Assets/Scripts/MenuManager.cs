@@ -18,16 +18,25 @@ public class MenuManager : MonoBehaviour
         restartButton.gameObject.SetActive(true);
     }
 
-    public void RestartGame()
+	public void StopDisplayWinner(int winner)
     {
-        SceneManager.LoadScene(1);
+		foreach (TMPro.TextMeshProUGUI w in winners)
+		{
+			w.gameObject.SetActive(false);
+		}
+        restartButton.gameObject.SetActive(false);
     }
 
+    // public void RestartGame()
+    // {
+    //     SceneManager.LoadScene(1);
+    // }
 
-    public void GoMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
+
+    // public void GoMenu()
+    // {
+    //     SceneManager.LoadScene(0);
+    // }
 
     public void ExitGame()
     {

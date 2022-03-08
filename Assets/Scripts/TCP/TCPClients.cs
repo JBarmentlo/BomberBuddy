@@ -150,7 +150,7 @@ public class PlayerClient : Client
 
 	public PlayerMessage ParseMsg(string data)
 	{
-		Debug.Log("Parse Player: {0}" + data);
+		// Debug.Log("Parse Player: {0}" + data);
 		return JsonUtility.FromJson<PlayerMessage>(data);
 	}
 
@@ -160,7 +160,7 @@ public class PlayerClient : Client
 		{
 			if (!RecievedMessage())
 				return this;
-			Debug.Log("Handle Player: {0}" + data);
+			// Debug.Log("Handle Player: {0}" + data);
 			PlayerMessage msg = (PlayerMessage)ParseMsg(data);
 			GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);
 			SendMessage(GlobalStateManager.Instance.GetState());
