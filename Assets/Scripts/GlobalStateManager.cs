@@ -15,15 +15,15 @@ public class ResponseObject
     public string JsonRep;
 }
 
-[System.Serializable]
-public struct State
-{
-    [SerializeField]
-    public	List<Player>			playerList;
+// [System.Serializable]
+// public struct State
+// {
+//     [SerializeField]
+//     public	List<Player>			playerList;
 
-    [SerializeField]
-    private List<GlobalStateLink> 	stateList;
-}
+//     [SerializeField]
+//     private List<GlobalStateLink> 	stateList;
+// }
 
 
 public class GlobalStateManager : MonoBehaviour
@@ -43,6 +43,9 @@ public class GlobalStateManager : MonoBehaviour
     private int deadPlayers 		= 0;
     private int deadPlayerNumber 	= -1;  
     private int winnerNum			= -1;
+
+    private bool resetting			= false;
+
     // private int w = 10;
     // private int h = 9;
 
@@ -96,7 +99,6 @@ public class GlobalStateManager : MonoBehaviour
             winnerNum = 0;
             Debug.Log("The game ended in a draw!");
         }
-        deadPlayerNumber = -1;  
         menu = GameObject.Find("Menu");
         menu.GetComponent<MenuManager>().DisplayWinner(winnerNum);
     }  
@@ -199,11 +201,17 @@ public class GlobalStateManager : MonoBehaviour
         return s;
     }
 
+
 	public void			Reset()
+	{
+		resetting = true;
+	}
+	private void			InternalReset()
 	{
 		MapCreatorScript.Instance.ResetMap();
 		foreach (Player p in playerList)
 		{
+			Debug.Log("IHNST");
 			InstantiatePlayer(p.playerNumber);
 			Destroy(p.gameObject);
 		}
@@ -216,6 +224,8 @@ public class GlobalStateManager : MonoBehaviour
         menu.GetComponent<MenuManager>().StopDisplayWinner(winnerNum);
 		deadPlayers = 0;
 		winnerNum	= -1;
+		deadPlayerNumber = -1;
+		resetting = false; 
 	}
 
 	public bool			IsOccupiedByBomb(Vector3 pos)
@@ -224,11 +234,18 @@ public class GlobalStateManager : MonoBehaviour
 		{
 			if (obj.type == StateLinkType.Bomb && obj.transform.position == pos)
 			{
-				Debug.Log("Bomb Drop Blocked");
 				return (true);
 			}
 		}
 		return (false);
 	}
+	public void			Update()
+	{
+		if (resetting)
+		{
+			InternalReset();
+		}
+	}
+
 }
 
