@@ -22,7 +22,9 @@ public class GlobalStateLink : MonoBehaviour
     public StateLinkType 	type;
     public bool 			is_player = false;
 
-    public string           localDate;
+    public DateTime         SpawnDate;
+    public string           age;
+
 
     [SerializeField]
     public Vector3          position = new Vector3();
@@ -30,7 +32,7 @@ public class GlobalStateLink : MonoBehaviour
 
     public virtual void Start()
     {
-        localDate = DateTime.Now.ToString();
+        SpawnDate = DateTime.Now;
         GlobalStateManager.Instance.AddGameObject(this);
     }
     public virtual void OnDestroy()
@@ -41,6 +43,7 @@ public class GlobalStateLink : MonoBehaviour
     public virtual string JsonRep()
     {
         position = this.gameObject.transform.position;
+        age =  (DateTime.Now - SpawnDate).ToString();
         return JsonUtility.ToJson(this);
     }
 
