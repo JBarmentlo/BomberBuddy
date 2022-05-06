@@ -211,7 +211,6 @@ public class GlobalStateManager : MonoBehaviour
 		MapCreatorScript.Instance.ResetMap();
 		foreach (Player p in playerList)
 		{
-			Debug.Log("IHNST");
 			InstantiatePlayer(p.playerNumber);
 			Destroy(p.gameObject);
 		}

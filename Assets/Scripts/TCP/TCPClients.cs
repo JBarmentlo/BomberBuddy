@@ -146,6 +146,7 @@ public class PlayerClient : Client
 	{
 		this.tcpClient = tcpClient;
 		this.playerNum = playerNum;
+		NetTransporter.Instance.SetReady(playerNum);
 	}
 
 	public PlayerMessage ParseMsg(string data)
@@ -162,8 +163,26 @@ public class PlayerClient : Client
 				return this;
 			// Debug.Log("Handle Player: {0}" + data);
 			PlayerMessage msg = (PlayerMessage)ParseMsg(data);
-			GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);
-			SendMessage(GlobalStateManager.Instance.GetState());
+			if (msg.action == ActionEnum.ReadyCheck) {
+				SendMessage(JsonUtility.ToJson(new ReadyMessage(NetTransporter.Instance.IsEveryoneReady())));
+			}
+			else if (msg.action == ActionEnum.Nothing) {
+				GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);
+				SendMessage(GlobalStateManager.Instance.GetState());
+			}
+			else {
+				if (NetTransporter.Instance.IsEveryoneReady())
+				{
+					GlobalStateManager.Instance.DoAction(msg.action, msg.playerNum);
+					SendMessage(GlobalStateManager.Instance.GetState());
+				}
+				else
+				{
+					SendMessage(JsonUtility.ToJson(new ErrorMessage("Not everyone is ready")));
+				}
+
+			}
+
 			return this;
 		}
 		catch
@@ -178,7 +197,7 @@ public class ControllerClient : Client
 {
 	public ControllerClient(TcpClient tcpClient)
 	{
-
+		this.tcpClient = tcpClient;
 	}
 	public override Client HandleMsg()
 	{

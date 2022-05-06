@@ -11,7 +11,8 @@ public enum ActionEnum
 	Left,
 	Right,
 	Bomb,
-	Reset
+	Reset,
+	ReadyCheck
 };
 
 [System.Serializable]
@@ -26,6 +27,33 @@ public enum ClientTypeEnum
 // {
 // 	// public string msg;
 // }
+
+[System.Serializable]
+public class ReadyMessage
+{
+
+	public ReadyMessage(bool redi)
+	{
+		ready 		= redi;
+	}
+	// String action;
+	public bool 	ready;
+}
+
+[System.Serializable]
+public class ErrorMessage
+{
+
+	public ErrorMessage(string mesag, int codo = 0)
+	{
+		msg 		= mesag;
+		code		= codo;
+	}
+	// String action;
+	public string 	msg;
+	public int		code;
+}
+
 
 [System.Serializable]
 public class PlayerMessage
