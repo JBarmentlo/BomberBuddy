@@ -32,6 +32,17 @@ using UnityEngine;
 using System.Collections;
 using System;
 
+
+[System.Serializable]
+public enum MovementEnum
+{
+	Nothing,
+	Up,
+	Down,
+	Left,
+	Right
+};
+
 public class Player : GlobalStateLink
 {
 
@@ -54,6 +65,12 @@ public class Player : GlobalStateLink
     private Collider    playerCollider;
     private Transform   myTransform;
     private Animator    animator;
+
+    // private current_action MovementEnum = MovementEnum.Nothing;
+
+    // private Vector3
+
+
 
 
     // Use this for initialization
