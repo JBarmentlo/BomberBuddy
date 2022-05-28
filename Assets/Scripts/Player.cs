@@ -37,10 +37,10 @@ using System;
 public enum MovementEnum
 {
 	Nothing,
-	Up,
+	Right,
+    Up,
 	Down,
-	Left,
-	Right
+	Left
 };
 
 public class Player : GlobalStateLink
